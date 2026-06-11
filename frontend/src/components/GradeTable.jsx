@@ -27,15 +27,21 @@ export default function GradeTable({ grades, compact = false, onScoreChange }) {
         </thead>
         <tbody>
           {grades.map((grade) => (
-            <tr key={grade.id}>
+            <tr key={grade.id} className={grade.isZeroCredit ? "zero-credit-row" : ""}>
               {!compact && <td>{grade.student.studentNo}</td>}
               {!compact && <td>{grade.student.name}</td>}
               <td>
-                <strong>{grade.courseName}</strong>
+                <strong>
+                  {grade.courseName}
+                  {grade.isZeroCredit && <span className="zero-credit-tag">零学分</span>}
+                </strong>
                 <span>{grade.courseCode}</span>
               </td>
               <td>{grade.semester}</td>
-              <td>{grade.credit}</td>
+              <td>
+                {grade.credit}
+                {grade.isZeroCredit && <span className="zero-credit-note">（不计入绩点）</span>}
+              </td>
               <td>
                 {onScoreChange ? (
                   <input
@@ -50,7 +56,7 @@ export default function GradeTable({ grades, compact = false, onScoreChange }) {
                   grade.score
                 )}
               </td>
-              <td>{grade.gpaPoint.toFixed(1)}</td>
+              <td>{grade.isZeroCredit ? <span className="muted">-</span> : grade.gpaPoint.toFixed(1)}</td>
               <td>{grade.letter}</td>
               <td>
                 {grade.appealStatus ? (

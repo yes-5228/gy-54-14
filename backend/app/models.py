@@ -42,6 +42,7 @@ class Grade(db.Model):
         from .services.gpa import score_to_letter, score_to_point
 
         latest_appeal = sorted(self.appeals, key=lambda appeal: appeal.created_at, reverse=True)
+        is_zero_credit = self.credit == 0
         return {
             "id": self.id,
             "student": self.student.to_dict(),
@@ -49,11 +50,12 @@ class Grade(db.Model):
             "courseName": self.course_name,
             "credit": self.credit,
             "score": self.score,
-            "gpaPoint": score_to_point(self.score),
-            "letter": score_to_letter(self.score),
+            "gpaPoint": score_to_point(self.score) if not is_zero_credit else 0,
+            "letter": score_to_letter(self.score) if not is_zero_credit else "-",
             "semester": self.semester,
             "teacher": self.teacher,
             "appealStatus": latest_appeal[0].status if latest_appeal else None,
+            "isZeroCredit": is_zero_credit,
             "createdAt": self.created_at.isoformat(),
             "updatedAt": self.updated_at.isoformat(),
         }

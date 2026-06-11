@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 
 from ..models import Grade
 from ..services.grade_service import create_grade, list_grades, update_grade
-from ..utils.validation import require_fields, validate_score
+from ..utils.validation import require_fields, validate_credit, validate_score
 
 grades_bp = Blueprint("grades", __name__)
 
@@ -26,6 +26,10 @@ def create():
     if error:
         return jsonify({"message": error}), 400
 
+    error = validate_credit(payload["credit"])
+    if error:
+        return jsonify({"message": error}), 400
+
     grade = create_grade(payload)
     return jsonify(grade.to_dict()), 201
 
@@ -36,6 +40,11 @@ def update(grade_id):
     payload = request.get_json() or {}
     if "score" in payload:
         error = validate_score(payload["score"])
+        if error:
+            return jsonify({"message": error}), 400
+
+    if "credit" in payload:
+        error = validate_credit(payload["credit"])
         if error:
             return jsonify({"message": error}), 400
 

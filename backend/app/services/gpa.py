@@ -45,9 +45,10 @@ def score_to_letter(score):
 
 
 def calculate_summary(grades):
-    total_credit = sum(grade.credit for grade in grades)
-    weighted_points = sum(grade.credit * score_to_point(grade.score) for grade in grades)
-    passed_credit = sum(grade.credit for grade in grades if grade.score >= 60)
+    graded_courses = [grade for grade in grades if grade.credit > 0]
+    total_credit = sum(grade.credit for grade in graded_courses)
+    weighted_points = sum(grade.credit * score_to_point(grade.score) for grade in graded_courses)
+    passed_credit = sum(grade.credit for grade in graded_courses if grade.score >= 60)
     return {
         "courseCount": len(grades),
         "totalCredit": round(total_credit, 2),
